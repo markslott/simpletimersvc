@@ -29,6 +29,9 @@ Your app should now be running on [localhost:5000](http://localhost:5000/).
 
 ```
 heroku create
+heroku config:set SF_TIMER_USER_NAME=<username>
+heroku config:set SF_TIMER_PASSWORD=<password>
+heroku config:set SF_TIMER_PASSWORD=<security token>
 git push heroku master
 heroku open
 ```
@@ -37,14 +40,3 @@ Alternatively, you can deploy your own copy of the app using the web-based flow:
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-## Documentation
-
-To authenticate to Salesforce, you will need to set three environment variables:
-SF_TIMER_USER_NAME  -  Set to the Salesforce API username you want to use
-SF_TIMER_PASSWORD - Password for the Salesforce user
-SF_TIMER_SECURITY_TOKEN - Salesforce security token for the Salesforce user
-```
-heroku config:set SF_TIMER_USER_NAME=myapiuser@my.org
-heroku config:set SF_TIMER_PASSWORD=<password>
-heroku config:set SF_TIMER_PASSWORD=<security token>
-```
