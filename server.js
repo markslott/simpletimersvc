@@ -51,8 +51,7 @@ router.route('/echo').post(function(req, res) {
 
   console.log(req.body);
   setTimeout(function() {
-     console.log('time to send response');
-
+  
     conn.sobject("Timer__c").update({ 
       Id : req.body.timerId,
       Timer_Expired__c : true
