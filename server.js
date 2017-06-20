@@ -48,6 +48,7 @@ router.get('/', function(req, res) {
 router.route('/echo').post(function(req, res) {
   var seconds = parseInt(req.body.seconds);
   var timerId = req.body.timerId;
+
   console.log(req.body);
   setTimeout(function() {
      console.log('time to send response');
@@ -65,7 +66,7 @@ router.route('/echo').post(function(req, res) {
   },seconds*1000);
   res.json({message : 'msg sent',
  	    seconds : seconds,
-            payload : payload});
+      timerId : timerId});
 });
 
 // more routes for our API will happen here
