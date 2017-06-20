@@ -1,0 +1,42 @@
+public class TimerController {
+    
+    public static final String url = 'https://salty-springs-83691.herokuapp.com/api/echo';
+    
+    public TimerController(){}
+    
+    public class JsonWrapper {
+        public Decimal seconds;
+        public String timerId;
+    }
+
+    @InvocableMethod(label='Start Timer' description='Starts timers.')
+    public static void startTimer(List<Timer__c> timers) {
+        for (Timer__c timer : timers) {
+            callout(timer.Seconds__c,timer.Id);
+            
+        }
+    }
+    
+    @future(callout=true)
+    public static void callout(Decimal seconds, String timerId) {
+        // Instantiate a new http object
+        Http h = new Http();
+        
+        
+        // Instantiate a new HTTP request, specify the method (GET) as well as the endpoint
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(url);
+        req.setMethod('POST');
+        req.setHeader('Content-Type','application/json');
+        JsonWrapper j = new JsonWrapper();
+        j.seconds = seconds;
+        j.timerId = timerId;
+        //String body='{ "seconds" : ' +seconds+', "timerId" : "'+timerId+'"}';
+        req.setBody(JSON.serialize(j));
+        
+        // Send the request, and return a response
+        HttpResponse res = h.send(req);
+        System.debug( res.getBody());
+    }
+
+}
