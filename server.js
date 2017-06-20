@@ -11,12 +11,13 @@ var sf         = require('node-salesforce');
 
 var username = "mlott@msl.23.demo";
 var password = "big4fish";
+var sectoken = "VTnigsDWGljTO9U7lL1ZK75W7";
 
 var conn = new sf.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env. 
    loginUrl : 'https://msl-23-demo.my.salesforce.com' 
 });
-conn.login(username, password, function(err, userInfo) {
+conn.login(username, password+sectoken, function(err, userInfo) {
   if (err) { return console.error(err); }
   // Now you can get the access token and instance URL information. 
   // Save them to establish connection next time. 
