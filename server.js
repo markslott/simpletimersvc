@@ -39,6 +39,7 @@ conn.login(config.username, config.password, function(err, userInfo) {
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.set('view engine', 'pug');
 
 var port = process.env.PORT || 8080;        // set our port
 
@@ -61,6 +62,13 @@ var oauth2 = new sf.OAuth2({
     clientSecret : config.clientSecret,
     redirectUri : config.callbackUri
 });
+
+app.get('/', function (req, res) {
+  res.render('index', { title: 'Hey', message: 'Hello there!' });
+  console.log("conn:");
+  console.log(conn);
+})
+
 // 
 // Get authz url and redirect to it. 
 // 
@@ -78,9 +86,9 @@ app.get('/oauth2/callback', function(req, res) {
     if (err) { return console.error(err); }
     // Now you can get the access token, refresh token, and instance URL information. 
     // Save them to establish connection next time. 
-    console.log(conn.accessToken);
-    console.log(conn.refreshToken);
-    console.log(conn.instanceUrl);
+    console.log("Access Token: " + conn.accessToken);
+    console.log("Refresh Token: " + conn.refreshToken);
+    console.log("Instance URL: " + conn.instanceUrl);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
     // ... 
