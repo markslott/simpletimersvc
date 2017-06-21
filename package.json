@@ -1,5 +1,5 @@
 {
-  "name": "sf short timer service",
+  "name": "sf_short_timer_service",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
