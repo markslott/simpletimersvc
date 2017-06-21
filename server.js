@@ -1,42 +1,39 @@
-// server.js
 
-// BASE SETUP
-// =============================================================================
-
-// call the packages we need
-var express    = require('express');        // call express
-var app        = express();                 // define our app using express
+var express    = require('express');        
+var app        = express();                 
 var bodyParser = require('body-parser');
 var sf         = require('node-salesforce');
 
-var username = process.env.SF_TIMER_USER_NAME;
-var password = process.env.SF_TIMER_PASSWORD;
-var sectoken = process.env.SF_TIMER_SECURITY_TOKEN;
-var loginUrl = process.env.SF_LOGIN_URL;
+var config = require('./app/config/config')();
 
-if (loginUrl === undefined) {
-  loginUrl = 'https://login.salesforce.com';
-}
-
-if (sectoken === undefined) {
-  sectoken = '';
-}
 
 var conn = new sf.Connection({
-  // you can change loginUrl to connect to sandbox or prerelease env. 
-   loginUrl : loginUrl
+  oauth2 : {
+    loginUrl : config.loginUrl,
+    clientId : config.clientId,
+    clientSecret : config.clientSecret,
+    redirectUri : config.callbackUri
+  }
+   
 });
-conn.login(username, password+sectoken, function(err, userInfo) {
-  if (err) { return console.error(err); }
+
+/*
+
+conn.login(config.username, config.password, function(err, userInfo) {
+  if (err) { 
+    console.error(err);
+    process.exit(1);
+  }
   // Now you can get the access token and instance URL information. 
   // Save them to establish connection next time. 
-  console.log(conn.accessToken);
-  console.log(conn.instanceUrl);
-  // logged in user property 
-  console.log("User ID: " + userInfo.id);
-  console.log("Org ID: " + userInfo.organizationId);
-  // ... 
-});
+  
+  console.log("Successful connection to Salesforce");
+  console.log("access token : " + conn.accessToken);
+  console.log("instance url : " + conn.instanceUrl);
+  console.log("refresh token: " + conn.refreshToken);
+  console.log("User ID      : " + userInfo.id);
+  console.log("Org ID       : " + userInfo.organizationId);
+});*/
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -47,43 +44,45 @@ var port = process.env.PORT || 8080;        // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
-var router = express.Router();              // get an instance of the express Router
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!' });   
-});
+require('./app/routes')(app, conn);
 
-router.route('/echo').post(function(req, res) {
-  var seconds = parseInt(req.body.seconds);
-  var timerId = req.body.timerId;
-
-  console.log(req.body);
-  setTimeout(function() {
-  
-    conn.sobject("Timer__c").update({ 
-      Id : req.body.timerId,
-      Timer_Expired__c : true
-      }, function(err, ret) {
-      if (err || !ret.success) { return console.error(err, ret); }
-      console.log('Updated Successfully : ' + ret.id);
-      // ... 
-    });
-
-     
-  },seconds*1000);
-  res.json({message : 'msg sent',
- 	    seconds : seconds,
-      timerId : timerId});
-});
-
-// more routes for our API will happen here
-
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/api', router);
 
 // START THE SERVER
 // =============================================================================
 app.listen(port);
 console.log('Magic happens on port ' + port);
+
+var oauth2 = new sf.OAuth2({
+  // you can change loginUrl to connect to sandbox or prerelease env. 
+  // loginUrl : 'https://test.salesforce.com', 
+    loginUrl : config.loginUrl,
+    clientId : config.clientId,
+    clientSecret : config.clientSecret,
+    redirectUri : config.callbackUri
+});
+// 
+// Get authz url and redirect to it. 
+// 
+app.get('/oauth2/auth', function(req, res) {
+  res.redirect(oauth2.getAuthorizationUrl({ scope : 'api refresh_token' }));
+});
+
+// 
+// Pass received authz code and get access token 
+// 
+app.get('/oauth2/callback', function(req, res) {
+  var conn = new sf.Connection({ oauth2 : oauth2 });
+  var code = req.param('code');
+  conn.authorize(code, function(err, userInfo) {
+    if (err) { return console.error(err); }
+    // Now you can get the access token, refresh token, and instance URL information. 
+    // Save them to establish connection next time. 
+    console.log(conn.accessToken);
+    console.log(conn.refreshToken);
+    console.log(conn.instanceUrl);
+    console.log("User ID: " + userInfo.id);
+    console.log("Org ID: " + userInfo.organizationId);
+    // ... 
+  });
+});
