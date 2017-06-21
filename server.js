@@ -79,7 +79,7 @@ app.get('/oauth2/auth', function(req, res) {
 // Pass received authz code and get access token 
 // 
 app.get('/oauth2/callback', function(req, res) {
-  var conn = new sf.Connection({ oauth2 : oauth2 });
+  //var conn = new sf.Connection({ oauth2 : oauth2 });
   var code = req.param('code');
   conn.authorize(code, function(err, userInfo) {
     if (err) { return console.error(err); }
