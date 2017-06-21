@@ -1,6 +1,40 @@
+extends ../node_modules/pug-bootstrap/_bootstrap
+append styles	
+	// Custom styles for this template
+	link(href='../node_modules/pug-bootstrap/css/jumbotron-narrow.css', rel='stylesheet')
+block body
+	.container
+		.header.clearfix
+			nav
+				ul.nav.nav-pills.pull-right
+					li.active(role='presentation')
+						a(href='#') Home
+					li(role='presentation')
+						a(href='#') About
+					li(role='presentation')
+						a(href='#') Contact
+			h3.text-muted Simple Timer Service
+		.jumbotron
+			h1 It's Running...
+			if authToken === undefined
+				p.lead
+					| And it looks like you're successfully logged in. If you wish to log out, just press the button below.
+				p
+					a.btn.btn-lg.btn-success(href='/oauth2/logout', role='button') Log me out!
+			else
+				p.lead
+					| But it looks like you need to log into your Salesforce org to authorize this application to use the API. Press the button below to get signed in.
+				p
+					a.btn.btn-lg.btn-success(href='/oauth2/auth', role='button') Start the Login Process!
+		
+		footer.footer
+			p © Salesforce Sales Engineering 2017
+
+
 html
   head
     title= title
   body
     h1= message
     h2= accessToken
+
