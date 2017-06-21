@@ -9,9 +9,9 @@ var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var sf         = require('node-salesforce');
 
-var username = "mlott@msl.23.demo";
-var password = "big4fish";
-var sectoken = "VTnigsDWGljTO9U7lL1ZK75W7";
+var username = process.env.SF_TIMER_USER_NAME;
+var password = process.env.SF_TIMER_PASSWORD;
+var sectoken = process.env.SF_TIMER_SECURITY_TOKEN;
 
 var conn = new sf.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env. 
