@@ -18,14 +18,15 @@ block body
 			h1 It's Running...
 			if authToken === undefined
 				p.lead
-					| And it looks like you're successfully logged in. If you wish to log out, just press the button below.
-				p
-					a.btn.btn-lg.btn-success(href='/oauth2/logout', role='button') Log me out!
-			else
-				p.lead
 					| But it looks like you need to log into your Salesforce org to authorize this application to use the API. Press the button below to get signed in.
 				p
 					a.btn.btn-lg.btn-success(href='/oauth2/auth', role='button') Start the Login Process!
+			else
+				p.lead
+					| And it looks like you're successfully logged in. If you wish to log out, just press the button below.
+				p
+					a.btn.btn-lg.btn-success(href='/oauth2/logout', role='button') Log me out!
+				
 		
 		footer.footer
 			p © Salesforce Sales Engineering 2017
