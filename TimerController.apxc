@@ -1,6 +1,6 @@
 public class TimerController {
     
-    public static final String url = 'https://salty-springs-83691.herokuapp.com/api/echo';
+    public static final String url = 'https://salty-springs-83691.herokuapp.com/api/timer';
     
     public TimerController(){}
     

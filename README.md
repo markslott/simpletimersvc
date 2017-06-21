@@ -31,9 +31,9 @@ Your app should now be running on [localhost:5000](http://localhost:5000/).
 heroku create
 heroku config:set SF_TIMER_USER_NAME=<username>
 heroku config:set SF_TIMER_PASSWORD=<password>
-heroku config:set SF_TIMER_PASSWORD=<security token>
+heroku config:set SF_TIMER_SECURITY_TOKEN=<security token>
+heroku config:set SF_LOGIN_URL=[https://login.salesforce.com | <your custom domain>]
 git push heroku master
-heroku open
 ```
 
 Alternatively, you can deploy your own copy of the app using the web-based flow:

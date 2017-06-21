@@ -12,10 +12,19 @@ var sf         = require('node-salesforce');
 var username = process.env.SF_TIMER_USER_NAME;
 var password = process.env.SF_TIMER_PASSWORD;
 var sectoken = process.env.SF_TIMER_SECURITY_TOKEN;
+var loginUrl = process.env.SF_LOGIN_URL;
+
+if (loginUrl === undefined) {
+  loginUrl = 'https://login.salesforce.com';
+}
+
+if (sectoken === undefined) {
+  sectoken = '';
+}
 
 var conn = new sf.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env. 
-   loginUrl : 'https://msl-23-demo.my.salesforce.com' 
+   loginUrl : loginUrl
 });
 conn.login(username, password+sectoken, function(err, userInfo) {
   if (err) { return console.error(err); }
