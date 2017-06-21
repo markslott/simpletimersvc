@@ -16,7 +16,7 @@ block body
 			h3.text-muted Simple Timer Service
 		.jumbotron
 			h1 It's Running...
-			if accessToken === undefined
+			if (accessToken === undefined) || (accessToken == null)
 				p.lead
 					| But it looks like you need to log into your Salesforce org to authorize this application to use the API. Press the button below to get signed in.
 				p
