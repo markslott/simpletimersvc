@@ -54,6 +54,7 @@ app.get('/oauth2/logout', function(req, res) {
     if (err) { return console.error(err); }
     // now the session has been expired. 
     console.log("just logged out. accessToken = " + conn.accessToken);
+    res.render('index', { accessToken: conn.accessToken });
   });
 })
 
@@ -72,6 +73,6 @@ app.get('/oauth2/callback', function(req, res) {
     console.log("Instance URL: " + conn.instanceUrl);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
-    res.render('index', { accessToken: conn.accessToken });
+    res.redirect('index', { accessToken: conn.accessToken });
   });
 });
