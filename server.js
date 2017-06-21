@@ -65,8 +65,8 @@ var oauth2 = new sf.OAuth2({
 
 app.get('/', function (req, res) {
   res.render('index', { title: 'Hey', message: 'Hello there!' });
-  console.log("conn:");
-  console.log(conn);
+  console.log("oauth2:");
+  console.log(oauth2);
 })
 
 // 
