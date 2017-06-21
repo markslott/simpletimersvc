@@ -16,7 +16,7 @@ var port = process.env.PORT || 8080;        // set our port
 // ROUTES FOR OUR API
 // =============================================================================
 
-require('./app/routes')(app, conn);
+
 
 
 // START THE SERVER
@@ -37,6 +37,8 @@ var conn = new sf.Connection({
   oauth2 : oauth2
 });
 
+require('./app/routes')(app, conn);
+
 app.get('/', function (req, res) {
   res.render('index', { accessToken: conn.accessToken });
   console.log(conn.accessToken);
@@ -53,7 +55,6 @@ app.get('/oauth2/logout', function(req, res) {
   conn.logout(function(err) {
     if (err) { return console.error(err); }
     // now the session has been expired. 
-    console.log("just logged out. accessToken = " + conn.accessToken);
     res.render('index', { accessToken: conn.accessToken });
   });
 })
