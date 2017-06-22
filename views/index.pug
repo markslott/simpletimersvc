@@ -18,7 +18,7 @@ block body
 				.inner.cover
 					h1.cover-heading Simple Timer Service
 					p.lead Just a simple node.js app that provides an API that will call back to Salesforce after a specified number of seconds. Great for demo / prototype scenarios where you need to trigger something in a few seconds rather than wait minutes for something to happen via a workflow.
-					if (accessToken === undefined) || (accessToken == null)
+					if (tokens === undefined) || (tokens == null)
 						p.lead
 							| But it looks like you need to log into your Salesforce org to authorize this application to use the API. Press the button below to get signed in.
 						p
@@ -26,6 +26,8 @@ block body
 					else
 						p.lead
 							| And it looks like you're successfully logged in. If you wish to log out, just press the button below.
+					    p.lead Salesforce Org ID set to #{tokens.orgId}
+						p.lead Salesforce User ID set to #{tokens.userId}
 						p
 							a.btn.btn-lg.btn-danger(href='/oauth2/logout', role='button') Log me out!
 					p.lead Salesforce Object set to #{config.sfObjectName}

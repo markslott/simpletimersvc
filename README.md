@@ -15,23 +15,11 @@ Add the TimerController apex class to your org and configure a process builder f
 new timer record is created.  Don't forget to change the endpoint in the apex class and add a remote site setting to allow 
 Salesforce to call it.
 
-## Running Locally
-
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
-
-```sh
-git clone https://github.com/markslott/simpletimersvc.git # or clone your own fork
-cd simpletimersvc
-npm install
-npm start
-```
-
-Your app should now be running on [localhost:8080](http://localhost:8080/).
-
 ## Deploying to Heroku
 
 ```
 heroku create
+heroku addons:create heroku-redis:hobby-dev
 heroku config:set SF_CLIENT_ID=<your connected app client id>
 heroku config:set SF_CLIENT_SECRET=<your connected app client secret>
 heroku config:set SF_LOGIN_URL=[https://login.salesforce.com | <your custom domain>]

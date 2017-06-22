@@ -29,25 +29,40 @@ var oauth2 = new sf.OAuth2({
     redirectUri : config.callbackUri
 });
 
-var conn;
+var conn, tokens;
 
+
+//on startup, check for refresh/access tokens in redis.
+//if present, use that to login
+//otherwise, just set the oauth values for the connection and wait for 
+//someone to start the oauth web flow
 client.exists('tokens', function(err, reply) {
     if (reply === 1) {
       console.log('tokens exist');
       client.hgetall('tokens', function(err, object) {
         console.log(object);
+        //this will reestablish the connection to Salesforce
+        tokens = object;
         conn = new sf.Connection({
           oauth2 : oauth2,
           instanceUrl : object.instanceUrl,
           accessToken : object.accessToken,
           refreshToken : object.refreshToken
         }).on("refresh", function(accessToken, res) {
-          // Refresh event will be fired when renewed access token 
-          // to store it in your storage for next request 
+          client.hgetall('tokens', function(err, object) {
+            client.hmset('tokens', {
+              'refreshToken': object.refreshToken,
+              'accessToken' : accessToken,
+              'instanceUrl' : object.instanceUrl,
+              'userId'      : object.id,
+              'orgId'       : object.organizationId
+            });
+            tokens.accessToken = accessToken;
+          }
         }); 
       });
     } else {
-      console.log('tokens don\'t exist');
+      console.log('tokens don\'t exist. you will need to login to Salesforce org via web page');
       conn = new sf.Connection({
             oauth2 : oauth2
       });
@@ -57,8 +72,7 @@ client.exists('tokens', function(err, reply) {
 require('./app/routes')(app, conn);
 
 app.get('/', function (req, res) {
-  res.render('index', { accessToken: conn.accessToken, config : config });
-  console.log(conn.accessToken);
+  res.render('index', { tokens: tokens, config : config });
 })
 
 // 
@@ -68,41 +82,64 @@ app.get('/oauth2/auth', function(req, res) {
   res.redirect(oauth2.getAuthorizationUrl({ scope : 'api refresh_token' }));
 });
 
+
+// destroy the tokens in redis, kill the connection.
 app.get('/oauth2/logout', function(req, res) {
   conn.logout(function(err) {
     if (err) { return console.error(err); }
-    // now the session has been expired. 
+    
     client.del('tokens', function(err, reply) {
       console.log("deleting tokens from redis");
       console.log(reply);
     });
-    res.render('index', { accessToken: conn.accessToken, config : config });
+    res.render('index', { tokens: tokens, config : config });
   });
 })
 
 // 
 // Pass received authz code and get access token 
+// stash token and use to estabilsh connection to Salesforce
 // 
 app.get('/oauth2/callback', function(req, res) {
   //var conn = new sf.Connection({ oauth2 : oauth2 });
   var code = req.param('code');
-  conn.authorize(code, function(err, userInfo) {
+  var sflogin = new sf.Connection({
+      oauth2 : oauth2
+  });
+  sflogin.authorize(code, function(err, userInfo) {
     if (err) { return console.error(err); }
     // Now you can get the access token, refresh token, and instance URL information. 
     // Save them to establish connection next time. 
-    console.log("Access Token: " + conn.accessToken);
-    console.log("Refresh Token: " + conn.refreshToken);
-    console.log("Instance URL: " + conn.instanceUrl);
+    console.log("Successful login to Salesforce:");
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
-    client.hmset('tokens', {
+    tokens = {
       'refreshToken': conn.refreshToken,
       'accessToken' : conn.accessToken,
       'instanceUrl' : conn.instanceUrl,
       'userId'      : userInfo.id,
       'orgId'       : userInfo.organizationId
-    });
-    res.render('index', { accessToken: conn.accessToken, config : config });
-
+    }
+    client.hmset('tokens', tokens);
+    //login using access and refresh token - we should now stay logged in for
+    //a very long time - basically as long as the refresh token lives.
+    conn = new sf.Connection({
+      oauth2       : oauth2,
+      instanceUrl  : tokens.instanceUrl,
+      accessToken  : tokens.accessToken,
+      refreshToken : tokens.refreshToken
+    }).on("refresh", function(accessToken, res) {
+      client.hgetall('tokens', function(err, object) {
+        client.hmset('tokens', {
+          'refreshToken': object.refreshToken,
+          'accessToken' : accessToken,
+          'instanceUrl' : object.instanceUrl,
+          'userId'      : object.id,
+          'orgId'       : object.organizationId
+        });
+        tokens.accessToken = accessToken;
+      })
+    }); 
+    res.render('index', { tokens: tokens, config : config });
   });
 });
