@@ -26,10 +26,10 @@ block body
 					else
 						p.lead
 							| And it looks like you're successfully logged in. If you wish to log out, just press the button below.
-					    p.lead 
-					    	Salesforce Org ID set to #{tokens.orgId}
 						p.lead 
-							Salesforce User ID set to #{tokens.userId}
+							Salesforce Org ID set to #{tokens.orgId}
+				    	p.lead 
+				    		Salesforce User ID set to #{tokens.userId}
 						p
 							a.btn.btn-lg.btn-danger(href='/oauth2/logout', role='button') Log me out!
 					p.lead Salesforce Object set to #{config.sfObjectName}
