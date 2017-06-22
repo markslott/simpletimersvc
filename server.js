@@ -36,6 +36,7 @@ var conn, tokens;
 //if present, use that to login
 //otherwise, just set the oauth values for the connection and wait for 
 //someone to start the oauth web flow
+var tokenIsValid = true;
 client.exists('tokens', function(err, reply) {
     if (reply === 1) {
       console.log('tokens exist');
@@ -60,6 +61,17 @@ client.exists('tokens', function(err, reply) {
             tokens.accessToken = accessToken;
           }); 
         });
+        //test connection
+        var query = conn.query("SELECT Id FROM "+config.sfObjectName+" LIMIT 5")
+        .on("error", function(err) {
+          console.error("Error testing connection. Let's just assume we need to log in again");
+          console.error(err);
+          tokens = null;
+          conn = new sf.Connection({
+            oauth2 : oauth2
+          });
+        });
+
       });
     } else {
       console.log('tokens don\'t exist. you will need to login to Salesforce org via web page');
