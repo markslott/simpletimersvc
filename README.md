@@ -75,5 +75,4 @@ You can verify what is happening on the Heroku side by running the following com
 ```
 heroku logs -t
 ```
-If your record has a checkbox
 
