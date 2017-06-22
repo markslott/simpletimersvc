@@ -1,32 +1,49 @@
 extends ../node_modules/pug-bootstrap/_bootstrap
-append styles	
-	// Custom styles for this template
-	link(href='../node_modules/pug-bootstrap/css/jumbotron-narrow.css', rel='stylesheet')
+
+append styles
+	//	!-- Custom styles for this template --
+	link(href="../node_modules/pug-bootstrap/css/cover.css", rel="stylesheet")
+
+	script(src="../js/three.min.js")
+	script(src="../js/projector.js")
+	script(src="../js/canvas-renderer.js")
+	script(src="../js/3d-lines-animation.js")
+
+	<!-- Animated background color -->
+	script(src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js")
+	script(src="../js/color.js")
+
 block body
-	.container
-		.header.clearfix
-			nav
-				ul.nav.nav-pills.pull-right
-					li.active(role='presentation')
-						a(href='#') Home
-					li(role='presentation')
-						a(href='#') About
-					li(role='presentation')
-						a(href='#') Contact
-			h3.text-muted Simple Timer Service
-		.jumbotron
-			h1 It's Running...
-			if (accessToken === undefined) || (accessToken == null)
-				p.lead
-					| But it looks like you need to log into your Salesforce org to authorize this application to use the API. Press the button below to get signed in.
-				p
-					a.btn.btn-lg.btn-success(href='/oauth2/auth', role='button') Start the Login Process!
-			else
-				p.lead
-					| And it looks like you're successfully logged in. If you wish to log out, just press the button below.
-				p
-					a.btn.btn-lg.btn-success(href='/oauth2/logout', role='button') Log me out!
-				
-		
-		footer.footer
-			p © Salesforce Sales Engineering 2017
+	.site-wrapper.canvas-wrap
+		.site-wrapper-inner.canvas-content
+			.cover-container
+				.masthead.clearfix
+					.inner
+						h3.masthead-brand Cover
+						nav
+							ul.nav.masthead-nav
+								li.active 
+									a(href="#") Home
+								li
+									a(href="#") Features
+								li
+									a(href="#") Contact
+				.inner.cover
+					h1.cover-heading Simple Timer Service.
+					p.lead Just a simple node.js app that provides an API that will call back to Salesforce after a specified number of seconds. Great for demo / prototype scenarios where you need to trigger something in a few seconds rather than wait minutes for something to happen via a workflow.
+					if (accessToken === undefined) || (accessToken == null)
+						p.lead
+							| But it looks like you need to log into your Salesforce org to authorize this application to use the API. Press the button below to get signed in.
+						p
+							a.btn.btn-lg.btn-success(href='/oauth2/auth', role='button') Start the Login Process!
+					else
+						p.lead
+							| And it looks like you're successfully logged in. If you wish to log out, just press the button below.
+						p
+							a.btn.btn-lg.btn-default(href='/oauth2/logout', role='button') Log me out!
+					
+				#canvas.gradient
+
+				.mastfoot
+					.inner
+						p © Salesforce Sales Engineering 2017
