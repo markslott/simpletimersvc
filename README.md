@@ -69,9 +69,11 @@ heroku open
 ```
 and press the button to log into your Salesforce org. Log in with a user that has the TimerDemoService permission set.  If successful, you will see that you're authenticated and the web page will display your user id and org id
 
-In Salesforce, go to the Timers tab and create a new record. Specify the number of seconds you want to wait. After that amount of time, the Timer Expired checkbox should be checked.  You can verify what is happening on the Heroku side by running the following command
+In Salesforce, go to the Timers tab and create a new record. Specify the number of seconds you want to wait. After that amount of time, the Timer Expired checkbox should be checked. At this point, assuming everything is working, you can tie triggers, workflows, or process builder flows off that state change and do anything you want.
+
+You can verify what is happening on the Heroku side by running the following command
 ```
 heroku logs -t
 ```
-
+If your record has a checkbox
 
