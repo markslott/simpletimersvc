@@ -1,13 +1,13 @@
 module.exports = function(app, conn, config) {
 
-  app.post('/v1/timer',(req, res) => {
+  app.post('/api/v1/timer',(req, res) => {
 	  var seconds = parseInt(req.body.seconds);
 	  var timerId = req.body.timerId;
 
 	  console.log(req.body);
 	  setTimeout(function() {
 	  
-	    conn.sobject("Timer__c").update({ 
+	    conn.sobject(config.sfObjectName).update({ 
 	      Id : req.body.timerId,
 	      Timer_Expired__c : true
 	      }, function(err, ret) {

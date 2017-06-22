@@ -5,11 +5,10 @@ var bodyParser = require('body-parser');
 var sf         = require('node-salesforce');
 var config     = require('./app/config/config')();
 
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set('view engine', 'pug');
+app.use(express.static(__dirname+'/public'));
 
 var port = process.env.PORT || 8080;        // set our port
 
@@ -35,7 +34,7 @@ var conn = new sf.Connection({
 require('./app/routes')(app, conn);
 
 app.get('/', function (req, res) {
-  res.render('index', { accessToken: conn.accessToken });
+  res.render('index', { accessToken: conn.accessToken, config : config });
   console.log(conn.accessToken);
 })
 

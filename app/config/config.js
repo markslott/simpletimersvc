@@ -9,10 +9,25 @@ module.exports = () => {
 
 	var configInvalid = false;
 
+	if (clientId === undefined) {
+		console.error('SF_CLIENT_ID environment variable not set. Got to set that first, then start app.');
+		configInvalid = true;
+	}
+
+	if (clientSecret === undefined) {
+		console.error('SF_CLIENT_SECRET environment variable not set. Got to set that first, then start app.');
+		configInvalid = true;
+	}
+
 	if (loginUrl === undefined) {
 	  loginUrl = 'https://login.salesforce.com';
 	  console.warn('Warning: SF_LOGIN_URL not defined. defaulting to https://login.salesforce.com')
 	}
+
+	console.warn('Callback URL set to: ' + callbackUri);
+	console.warn('Make sure hostname is set properly in config.js, or oauth will not work');
+	console.warn('Salesforce object name set to : ' + sfObjectName);
+	console.warn('Verify that object name matches your salesforce org if you have not.');
 
 	if (configInvalid) {
 		process.exit(1);
