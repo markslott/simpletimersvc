@@ -58,8 +58,8 @@ client.exists('tokens', function(err, reply) {
               'orgId'       : object.organizationId
             });
             tokens.accessToken = accessToken;
-          }
-        }); 
+          }); 
+        });
       });
     } else {
       console.log('tokens don\'t exist. you will need to login to Salesforce org via web page');
