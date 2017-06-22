@@ -4,6 +4,8 @@ var app        = express();
 var bodyParser = require('body-parser');
 var sf         = require('node-salesforce');
 var config     = require('./app/config/config')();
+var client     = require('redis').createClient(process.env.REDIS_URL);
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,8 +29,29 @@ var oauth2 = new sf.OAuth2({
     redirectUri : config.callbackUri
 });
 
-var conn = new sf.Connection({
-  oauth2 : oauth2
+var conn;
+
+client.exists('tokens', function(err, reply) {
+    if (reply === 1) {
+      console.log('tokens exist');
+      client.hgetall('tokens', function(err, object) {
+        console.log(object);
+        conn = new sf.Connection({
+          oauth2 : oauth2,
+          instanceUrl : object.instanceUrl,
+          accessToken : object.accessToken,
+          refreshToken : object.refreshToken
+        }).on("refresh", function(accessToken, res) {
+          // Refresh event will be fired when renewed access token 
+          // to store it in your storage for next request 
+        }); 
+      });
+    } else {
+      console.log('tokens don\'t exist');
+      conn = new sf.Connection({
+            oauth2 : oauth2
+      });
+    }
 });
 
 require('./app/routes')(app, conn);
@@ -49,6 +72,10 @@ app.get('/oauth2/logout', function(req, res) {
   conn.logout(function(err) {
     if (err) { return console.error(err); }
     // now the session has been expired. 
+    client.del('tokens', function(err, reply) {
+      console.log("deleting tokens from redis");
+      console.log(reply);
+    });
     res.render('index', { accessToken: conn.accessToken, config : config });
   });
 })
@@ -68,6 +95,13 @@ app.get('/oauth2/callback', function(req, res) {
     console.log("Instance URL: " + conn.instanceUrl);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
+    client.hmset('tokens', {
+      'refreshToken': conn.refreshToken,
+      'accessToken' : conn.accessToken,
+      'instanceUrl' : conn.instanceUrl,
+      'userId'      : userInfo.id,
+      'orgId'       : userInfo.organizationId
+    });
     res.render('index', { accessToken: conn.accessToken, config : config });
 
   });

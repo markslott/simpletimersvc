@@ -16,6 +16,7 @@
     "parseint": "^1.0.1",
     "pug": "^2.0.0-rc.2",
     "pug-bootstrap": "0.0.15",
+    "redis": "^2.7.1",
     "request": "^2.81.0"
   }
 }
