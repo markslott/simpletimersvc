@@ -92,6 +92,7 @@ app.get('/oauth2/logout', function(req, res) {
       console.log("deleting tokens from redis");
       console.log(reply);
     });
+    tokens = null;
     res.render('index', { tokens: tokens, config : config });
   });
 })
