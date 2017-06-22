@@ -139,15 +139,15 @@ app.get('/oauth2/callback', function(req, res) {
     // Now you can get the access token, refresh token, and instance URL information. 
     // Save them to establish connection next time. 
     console.log("Successful login to Salesforce:");
-    console.log("accessToken: " + conn.accessToken);
-    console.log("refreshToken: "+ conn.refreshToken);
-    console.log("instanceUrl: " +conn.instanceUrl);
+    console.log("accessToken: " + sflogin.accessToken);
+    console.log("refreshToken: "+ sflogin.refreshToken);
+    console.log("instanceUrl: " +sflogin.instanceUrl);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
     tokens = {
-      refreshToken : conn.refreshToken,
-      accessToken : conn.accessToken,
-      instanceUrl : conn.instanceUrl,
+      refreshToken : sflogin.refreshToken,
+      accessToken : sflogin.accessToken,
+      instanceUrl : sflogin.instanceUrl,
       userId      : userInfo.id,
       orgId       : userInfo.organizationId
     }
