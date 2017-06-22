@@ -14,12 +14,6 @@ app.use(express.static(__dirname+'/public'));
 
 var port = process.env.PORT || 8080;        // set our port
 
-
-// START THE SERVER
-// =============================================================================
-app.listen(port);
-console.log('Magic happens on port ' + port);
-
 var oauth2 = new sf.OAuth2({
   // you can change loginUrl to connect to sandbox or prerelease env. 
   // loginUrl : 'https://test.salesforce.com', 
@@ -36,7 +30,6 @@ var conn, tokens;
 //if present, use that to login
 //otherwise, just set the oauth values for the connection and wait for 
 //someone to start the oauth web flow
-var tokenIsValid = true;
 client.exists('tokens', function(err, reply) {
     if (reply === 1) {
       console.log('tokens exist');
@@ -91,8 +84,6 @@ client.exists('tokens', function(err, reply) {
       });
     }
 });
-
-require('./app/routes')(app, conn);
 
 app.get('/', function (req, res) {
   res.render('index', { tokens: tokens, config : config });
@@ -174,3 +165,29 @@ app.get('/oauth2/callback', function(req, res) {
     res.render('index', { tokens: tokens, config : config });
   });
 });
+
+app.post('/api/v1/timer',(req, res) => {
+    var seconds = parseInt(req.body.seconds);
+    var timerId = req.body.timerId;
+
+    console.log(req.body);
+    setTimeout(function() {
+    
+      conn.sobject(config.sfObjectName).update({ 
+        Id : req.body.timerId,
+        Timer_Expired__c : true
+        }, function(err, ret) {
+        if (err || !ret.success) { return console.error(err, ret); }
+        console.log('Updated Successfully : ' + ret.id);
+      });
+
+       
+    },seconds*1000);
+    res.json({message : 'msg sent',
+        seconds : seconds,
+        timerId : timerId});
+  });
+
+// START THE SERVER
+// =============================================================================
+app.listen(port);
