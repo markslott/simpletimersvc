@@ -86,7 +86,11 @@ app.get('/oauth2/auth', function(req, res) {
 // destroy the tokens in redis, kill the connection.
 app.get('/oauth2/logout', function(req, res) {
   conn.logout(function(err) {
-    if (err) { return console.error(err); }
+    if (err) {
+      console.error('logout error: message below');
+      console.error(err);
+      //return console.error(err);
+    }
     
     client.del('tokens', function(err, reply) {
       console.log("deleting tokens from redis");
