@@ -62,17 +62,27 @@ client.exists('tokens', function(err, reply) {
           }); 
         });
         //test connection
-        var query = conn.query("SELECT Id FROM "+config.sfObjectName+" LIMIT 5")
-        .on("error", function(err) {
-          console.error("Error testing connection. Let's just assume we need to log in again");
-          console.error(err);
-          tokens = null;
-          conn = new sf.Connection({
-            oauth2 : oauth2
-          })
-        .run({ autoFetch : true, maxFetch : 4000 });
-        });
+        
+        conn.query("SELECT Id FROM "+config.sfObjectName+" LIMIT 5", function(err, result) {
+          if (err) {
+            console.error("Error testing connection:");
+            console.error(err);
+            console.error("Going to destroy tokens - need to reauthenticate to SF");
+            //assume tokens are invalid - destroy them!!!
+            tokens = null;
+            conn = new sf.Connection({
+                  oauth2 : oauth2
+            });
+            client.del('tokens', function(err, reply) {
+              console.log("deleting tokens from redis");
+              console.log(reply);
+            });
 
+          } else {
+            console.log("Testing connection - no error");
+          }
+          
+        });
       });
     } else {
       console.log('tokens don\'t exist. you will need to login to Salesforce org via web page');
