@@ -69,7 +69,8 @@ client.exists('tokens', function(err, reply) {
           tokens = null;
           conn = new sf.Connection({
             oauth2 : oauth2
-          });
+          })
+        .run({ autoFetch : true, maxFetch : 4000 });
         });
 
       });
