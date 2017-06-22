@@ -49,7 +49,7 @@ app.get('/oauth2/logout', function(req, res) {
   conn.logout(function(err) {
     if (err) { return console.error(err); }
     // now the session has been expired. 
-    res.render('index', { accessToken: conn.accessToken });
+    res.render('index', { accessToken: conn.accessToken, config : config });
   });
 })
 
