@@ -68,7 +68,7 @@ app.get('/oauth2/callback', function(req, res) {
     console.log("Instance URL: " + conn.instanceUrl);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
-    //res.render('index', { accessToken: conn.accessToken, config : config });
-    res.redirect(req.baseUrl)
+    res.render('index', { accessToken: conn.accessToken, config : config });
+
   });
 });
