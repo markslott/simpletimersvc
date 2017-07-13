@@ -1,0 +1,21 @@
+{
+  "name": "Simple Timer Service",
+  "description": "A simple node.js app to trigger things to happen in Salesforce in seconds, rather than minutes.  Useful for demos and protypes.",
+  
+  "success_url": "/",
+  "addons": ["heroku-redis:hobby-dev"],
+  "env": {
+    "SF_CLIENT_ID": {
+            "description": "Salesforce Connected App Client ID",
+            "value": ""
+    },
+    "SF_CLIENT_SECRET": {
+            "description": "Salesforce Connected App Client Secret",
+            "value": ""
+    },
+    "SF_LOGIN_URL": {
+            "description": "Salesforce Login URL",
+            "value": "https://login.salesforce.com"
+    }
+  }
+}
