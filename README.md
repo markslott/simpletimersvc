@@ -76,5 +76,5 @@ You can verify what is happening on the Heroku side by running the following com
 heroku logs -t
 ```
 
-The Timer Service will request a refresh token from Salesforce and stash it in Reddis, so this service should run uninterrupted as long as the refresh token doesn't expire.  
+The Timer Service will request a refresh token from Salesforce and stash it in Redis, so this service should run uninterrupted as long as the refresh token doesn't expire.  
 
